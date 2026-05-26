@@ -139,13 +139,14 @@ function language_label($lang) {
 					<p class="eyebrow"><?php echo $escapedChannelTitle !== '' ? e(tr('results_for', $channelTitle)) : e(tr('results')); ?></p>
 					<h2 id="totalResults"><?php echo e(tr('loading_videos')); ?></h2>
 				</div>
-				<a class="rss-link" href="rss.php?channel_id=<?php echo urlencode($channelId); ?>">
+				<a class="rss-link" href="rss.php?channel_id=<?php echo urlencode($channelId); ?>&amp;limit=50">
 					<svg class="rss-icon" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M5 5.5v3a10.5 10.5 0 0 1 10.5 10.5h3A13.5 13.5 0 0 0 5 5.5Z"></path>
 						<path d="M5 11v3a5 5 0 0 1 5 5h3a8 8 0 0 0-8-8Z"></path>
 						<circle cx="6.5" cy="17.5" r="1.8"></circle>
 					</svg>
-					<span><?php echo e(tr('rss_feed')); ?></span>
+					<span class="rss-label-full"><?php echo e(tr('rss_feed')); ?></span>
+					<span class="rss-label-short">RSS</span>
 				</a>
 			</section>
 			<div class="progress" aria-hidden="true">

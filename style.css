@@ -213,6 +213,10 @@ a {
 	gap: 7px;
 }
 
+.rss-label-short {
+	display: none;
+}
+
 .rss-icon {
 	display: block;
 	fill: currentColor;
@@ -423,10 +427,23 @@ a {
 	}
 
 	.search-row,
-	.results-toolbar,
 	.results-footer {
 		align-items: stretch;
 		flex-direction: column;
+	}
+
+	.results-toolbar {
+		align-items: center;
+		flex-direction: row;
+		padding: 12px;
+	}
+
+	.results-toolbar h2 {
+		font-size: 1rem;
+	}
+
+	.results-toolbar .eyebrow {
+		font-size: 0.7rem;
 	}
 
 	.results-footer {
@@ -434,8 +451,21 @@ a {
 	}
 
 	.search-row button,
-	.rss-link,
 	.load-more {
 		width: 100%;
+	}
+
+	.rss-link {
+		flex: 0 0 auto;
+		min-height: 34px;
+		padding: 0 10px;
+	}
+
+	.rss-label-full {
+		display: none;
+	}
+
+	.rss-label-short {
+		display: inline;
 	}
 }
