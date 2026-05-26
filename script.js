@@ -168,12 +168,20 @@ function renderVideos(videos) {
 		copyInput.value = url;
 		copyInput.addEventListener('click', () => copyInput.select());
 
-		const status = document.createElement('span');
-		status.className = 'commons-status';
-		status.textContent = t('checking_commons');
-
 		const statusRow = document.createElement('div');
 		statusRow.className = 'commons-row';
+
+		const actions = document.createElement('div');
+		actions.className = 'commons-actions';
+
+		const checkButton = document.createElement('button');
+		checkButton.className = 'commons-button';
+		checkButton.type = 'button';
+		checkButton.innerHTML = `${commonsLogo()}<span>${t('check_commons')}</span>`;
+		checkButton.addEventListener('click', () => {
+			checkButton.disabled = true;
+			checkWikimediaCommons(video.id, item, checkButton);
+		});
 
 		const uploadLink = document.createElement('a');
 		uploadLink.className = 'upload-link';
@@ -193,11 +201,11 @@ function renderVideos(videos) {
 				<path d="M5 5h6v2H7v10h10v-4h2v6H5V5Z"></path>
 			</svg>
 		`;
-		statusRow.append(status, uploadLink);
+		actions.append(checkButton, uploadLink);
+		statusRow.append(actions);
 
 		item.append(thumbnail, title, copyInput, statusRow);
 		list.appendChild(item);
-		checkWikimediaCommons(video.id, item, status);
 	});
 }
 
@@ -209,21 +217,62 @@ function formatDate(dateValue) {
 	}).format(new Date(dateValue));
 }
 
-async function checkWikimediaCommons(videoId, item, status) {
+async function checkWikimediaCommons(videoId, item, button, attempt = 1) {
 	try {
+		button.innerHTML = `${commonsLogo()}<span>${t('checking_commons')}</span>`;
 		const params = new URLSearchParams({ videoId });
 		const response = await fetch(`published_check.php?${params.toString()}`);
 		const commonsMatch = await response.json();
 
+		if (!response.ok || commonsMatch.confidence === 'unknown') {
+			throw new Error('Commons check failed');
+		}
+
 		if (commonsMatch.matched === true) {
+			const result = commonsMatch.results?.[0];
+			const commonsUrl = result?.pageid
+				? `https://commons.wikimedia.org/?curid=${encodeURIComponent(result.pageid)}`
+				: 'https://commons.wikimedia.org/';
+			const link = document.createElement('a');
+			link.className = 'commons-button commons-button-match';
+			link.href = commonsUrl;
+			link.target = '_blank';
+			link.rel = 'noopener noreferrer';
+			link.setAttribute('aria-label', `${t('commons_video')} (${t('external_link')})`);
+			link.innerHTML = `${commonsLogo()}<span>${t('commons_video')}</span>${externalIcon()}<span class="external-label">${t('external_link')}</span>`;
+			button.replaceWith(link);
 			item.classList.add('possible-commons-match');
-			status.textContent = t('possible_commons_match', commonsMatch.totalHits);
 		} else {
-			status.textContent = t('no_commons_match');
+			button.classList.add('commons-button-no-match');
+			button.disabled = true;
+			button.innerHTML = `${commonsLogo()}<span>${t('no_commons_match')}</span>`;
 		}
 	} catch (error) {
-		status.textContent = t('commons_check_failed');
+		if (attempt < 2) {
+			await wait(1200);
+			return checkWikimediaCommons(videoId, item, button, attempt + 1);
+		}
+
+		button.disabled = false;
+		button.innerHTML = `${commonsLogo()}<span>${t('commons_check_failed')}</span>`;
 	}
+}
+
+function commonsLogo() {
+	return '<img class="commons-logo" src="assets/commons-logo.svg" alt="" aria-hidden="true">';
+}
+
+function externalIcon() {
+	return `
+		<svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M14 4h6v6h-2V7.4l-7.3 7.3-1.4-1.4L16.6 6H14V4Z"></path>
+			<path d="M5 5h6v2H7v10h10v-4h2v6H5V5Z"></path>
+		</svg>
+	`;
+}
+
+function wait(milliseconds) {
+	return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function t(key, ...values) {

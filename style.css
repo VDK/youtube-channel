@@ -366,23 +366,17 @@ a {
 .commons-row {
 	align-items: flex-start;
 	display: flex;
-	gap: 10px;
-	justify-content: space-between;
+	justify-content: flex-end;
 	padding: 0 12px 12px;
 }
 
-.commons-status {
-	color: var(--muted);
-	font-size: 0.82rem;
-	font-weight: 700;
-	line-height: 1.25;
-	min-width: 0;
+.commons-actions {
+	display: inline-flex;
+	flex: 0 0 auto;
+	gap: 6px;
 }
 
-.possible-commons-match .commons-status {
-	color: var(--success);
-}
-
+.commons-button,
 .upload-link {
 	align-items: center;
 	border: 1px solid var(--soft-line);
@@ -399,8 +393,45 @@ a {
 	white-space: nowrap;
 }
 
-.upload-link svg {
+.commons-button {
+	cursor: pointer;
+	font-family: inherit;
+}
+
+.commons-button:disabled {
+	cursor: progress;
+	opacity: 0.65;
+}
+
+.commons-button-no-match,
+.commons-button-no-match:disabled {
+	background: var(--subtle);
+	color: var(--muted);
+	cursor: default;
+	opacity: 1;
+}
+
+.commons-button-match {
+	border-color: rgba(20, 134, 109, 0.45);
+	color: var(--success);
+}
+
+.commons-logo {
+	height: 14px;
+	width: 14px;
+	object-fit: contain;
+}
+
+.upload-link svg,
+.commons-button svg {
 	fill: currentColor;
+	height: 14px;
+	flex: 0 0 auto;
+	width: 14px;
+}
+
+.upload-link .external-icon,
+.commons-button .external-icon {
 	height: 14px;
 	width: 14px;
 }
@@ -409,6 +440,15 @@ a {
 	border-color: var(--accent);
 	background: #eef3ff;
 	color: var(--accent-dark);
+}
+
+.external-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
 }
 
 .load-more {

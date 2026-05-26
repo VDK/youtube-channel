@@ -35,10 +35,11 @@ class CommonsClient {
 
 				foreach ($response['query']['search'] ?? [] as $result) {
 					$pageId = $result['pageid'] ?? null;
+					$title = $result['title'] ?? '';
 
 					if ($pageId !== null) {
 						$results[$pageId] = [
-							'title' => $result['title'] ?? '',
+							'title' => $title,
 							'pageid' => $pageId,
 						];
 					}
