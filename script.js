@@ -1,63 +1,237 @@
-var completed  = 0;
+let loadedVideos = 0;
+let scannedApiVideos = 0;
+let totalReportedVideos = 0;
+let nextPageToken = '';
+let loadingVideos = false;
+const i18n = window.i18n || {};
 
-$(document).ready(function() {
-    if (channelId != ''){
-    	loadPage(channelId);
-    }
+document.addEventListener('DOMContentLoaded', () => {
+	const loadMore = document.getElementById('loadMore');
+
+	if (loadMore) {
+		loadMore.addEventListener('click', () => loadPage(window.channelId, nextPageToken));
+	}
+
+	if (window.channelId) {
+		loadPage(window.channelId);
+	}
 });
 
-function loadPage(channelId, pageToken = ''){
-	$.ajax({
-	  dataType: "json",
-	  url: 'query.php',
-	  data: {channelId, pageToken},
-	  error: function(result){
-	  	console.log(result);
-	  },
-	  success: function(result){
-	  	window.result = result;
-	  	completed++;
-	  	$( "#progressbar" ).progressbar({ value: Math.round( completed/(result.totalResults/50) * 100) });
-	  	$( "#totalResults" ).text(result.totalResults + ' video\'s gevonden');
-	  	var video;
-	  	var date;
-	  	if (result.pageToken != false){
-	  		loadPage(channelId, result.pageToken);
-	  	}
-	  	for (var i = result.foundVideos.length - 1; i >= 0; i--) {
-	  		video = result.foundVideos[i];
-	  		date  = new Date(video.publishedAt);
-	  		$('#videos').append('<li id='+video.id+'><div class="ytd-grid-video ">'
-				+'<a id="thumbnail" tabindex="-1" href="https://youtube.com/watch?v='+video.id+'">'
-				+'<img id="img" class="style-scope yt-img-shadow" width="'+video.thumbnails.medium.width+'" src="'+video.thumbnails.medium.url+'">'
-				+'<p>'+("0" + date.getDate()).slice(-2) +'-'+("0" + (date.getMonth() + 1)).slice(-2) +'-'+date.getFullYear() + '</p>'
-				+'</div>'
-				+'</a>'
-				+'<h3 class="style-scope ytd-grid-video-renderer">'
-				+'<a id="video-title" class="yt-simple-endpoint" href="https://youtube.com//watch?v='+video.id+'" title="'+video.title+'">'+video.title+'</a></h3>'
-				+'<input type="text" size="35" value="https://youtube.com/watch?v='+video.id+'" onClick=\'this.setSelectionRange(0, this.value.length)\'/>'
-				+'</div>'
-				+'</li>');
-	  		checkWikimediaCommons(video.id);
-	  	}
-	  }
-	});
+async function loadPage(channelId, pageToken = '') {
+	if (loadingVideos) {
+		return;
+	}
 
+	loadingVideos = true;
+	toggleLoadMore(false);
 
+	try {
+		const params = new URLSearchParams({ channelId, pageToken });
+		const response = await fetch(`query.php?${params.toString()}`);
+		const result = await response.json();
+
+		if (!response.ok || result.error) {
+			throw new Error(result.error || 'Unable to load videos.');
+		}
+
+		nextPageToken = result.pageToken || '';
+		scannedApiVideos += result.scannedApiVideos || result.scannedUploads || 0;
+		totalReportedVideos = result.totalReportedVideos || result.totalResults || totalReportedVideos;
+		renderVideos(result.foundVideos);
+		updateProgress();
+		updateResultsNote(result.hasMoreApiPages === true || result.hasMoreUploads === true);
+
+		toggleLoadMore(nextPageToken !== '');
+	} catch (error) {
+		const totalResults = document.getElementById('totalResults');
+		if (totalResults) {
+			totalResults.textContent = error.message;
+		}
+	} finally {
+		loadingVideos = false;
+	}
 }
 
-function checkWikimediaCommons(videoId){
-	$.ajax({
-	  dataType: "json",
-	  url: 'published_check.php',
-	  data: {videoId},
-	  error: function(result){
-	  	console.log(result);
-	  },
-	  success: function(result){
-	  	if (result == true){
-	  		$('#'+videoId).addClass('publishedOnCommons');
-	  	}
-	  }
+function updateProgress() {
+	const totalResultsNode = document.getElementById('totalResults');
+	const progressbar = document.getElementById('progressbar');
+	const footerProgressbar = document.getElementById('footerProgressbar');
+	const boundedTotal = Math.max(totalReportedVideos, scannedApiVideos, 1);
+	const percentage = Math.min(Math.round((scannedApiVideos / boundedTotal) * 100), 100);
+
+	if (totalResultsNode) {
+		totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
+	}
+
+	if (progressbar) {
+		progressbar.style.width = `${percentage}%`;
+	}
+
+	if (footerProgressbar) {
+		footerProgressbar.style.width = `${percentage}%`;
+	}
+}
+
+function updateResultsNote(hasMoreUploads) {
+	const note = document.getElementById('resultsNote');
+	const footer = document.getElementById('resultsFooter');
+	const footerNote = document.getElementById('footerResultsNote');
+
+	if (!note) {
+		return;
+	}
+
+	let message = '';
+
+	if (hasMoreUploads) {
+		message = t('progress_more', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
+	} else if (scannedApiVideos < totalReportedVideos) {
+		message = t('progress_stopped', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
+	} else {
+		message = t('progress_done', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
+	}
+
+	note.textContent = message;
+
+	if (footerNote) {
+		footerNote.textContent = message;
+	}
+
+	if (footer) {
+		footer.hidden = loadedVideos === 0;
+	}
+}
+
+function formatCount(value) {
+	const number = Number(value) || 0;
+
+	if (number >= 1000000) {
+		return `${trimDecimal(number / 1000000)}m`;
+	}
+
+	if (number >= 1000) {
+		return `${trimDecimal(number / 1000)}k`;
+	}
+
+	return `${number}`;
+}
+
+function trimDecimal(value) {
+	return value.toFixed(1).replace(/\.0$/, '');
+}
+
+function toggleLoadMore(show) {
+	const loadMore = document.getElementById('loadMore');
+
+	if (loadMore) {
+		loadMore.hidden = !show;
+	}
+}
+
+function renderVideos(videos) {
+	const list = document.getElementById('videos');
+
+	videos.forEach((video) => {
+		loadedVideos += 1;
+		const url = `https://youtube.com/watch?v=${video.id}`;
+		const item = document.createElement('li');
+		item.id = video.id;
+		item.className = 'video-card';
+
+		const thumbnail = document.createElement('a');
+		thumbnail.className = 'thumbnail';
+		thumbnail.href = url;
+		thumbnail.target = '_blank';
+		thumbnail.rel = 'noopener noreferrer';
+
+		const image = document.createElement('img');
+		image.src = video.thumbnails?.medium?.url || video.thumbnails?.default?.url || '';
+		image.alt = '';
+		image.loading = 'lazy';
+		thumbnail.appendChild(image);
+
+		const date = document.createElement('time');
+		date.dateTime = video.publishedAt;
+		date.textContent = formatDate(video.publishedAt);
+		thumbnail.appendChild(date);
+
+		const title = document.createElement('a');
+		title.className = 'video-title';
+		title.href = url;
+		title.target = '_blank';
+		title.rel = 'noopener noreferrer';
+		title.textContent = video.title;
+
+		const copyInput = document.createElement('input');
+		copyInput.type = 'text';
+		copyInput.readOnly = true;
+		copyInput.value = url;
+		copyInput.addEventListener('click', () => copyInput.select());
+
+		const status = document.createElement('span');
+		status.className = 'commons-status';
+		status.textContent = t('checking_commons');
+
+		const statusRow = document.createElement('div');
+		statusRow.className = 'commons-row';
+
+		const uploadLink = document.createElement('a');
+		uploadLink.className = 'upload-link';
+		uploadLink.href = `https://video2commons.toolforge.org/?url=${encodeURIComponent(url)}`;
+		uploadLink.target = '_blank';
+		uploadLink.rel = 'noopener noreferrer';
+		uploadLink.title = t('upload_title');
+		uploadLink.setAttribute('aria-label', t('upload_title'));
+		uploadLink.innerHTML = `
+			<svg class="upload-icon" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M12 3 7 8h3v6h4V8h3l-5-5Z"></path>
+				<path d="M5 15h3v3h8v-3h3v5H5v-5Z"></path>
+			</svg>
+			<span>${t('upload')}</span>
+			<svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M14 4h6v6h-2V7.4l-7.3 7.3-1.4-1.4L16.6 6H14V4Z"></path>
+				<path d="M5 5h6v2H7v10h10v-4h2v6H5V5Z"></path>
+			</svg>
+		`;
+		statusRow.append(status, uploadLink);
+
+		item.append(thumbnail, title, copyInput, statusRow);
+		list.appendChild(item);
+		checkWikimediaCommons(video.id, item, status);
 	});
+}
+
+function formatDate(dateValue) {
+	return new Intl.DateTimeFormat('en-GB', {
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric',
+	}).format(new Date(dateValue));
+}
+
+async function checkWikimediaCommons(videoId, item, status) {
+	try {
+		const params = new URLSearchParams({ videoId });
+		const response = await fetch(`published_check.php?${params.toString()}`);
+		const commonsMatch = await response.json();
+
+		if (commonsMatch.matched === true) {
+			item.classList.add('possible-commons-match');
+			status.textContent = t('possible_commons_match', commonsMatch.totalHits);
+		} else {
+			status.textContent = t('no_commons_match');
+		}
+	} catch (error) {
+		status.textContent = t('commons_check_failed');
+	}
+}
+
+function t(key, ...values) {
+	let text = i18n[key] || key;
+
+	values.forEach((value) => {
+		text = text.replace('%s', value);
+	});
+
+	return text;
 }

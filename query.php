@@ -1,22 +1,18 @@
 <?php
-$key = 'AIzaSyBT5eh-KjxGdx-bSe8q7MsyMnLhu4bcOdc';
-$nextPageToken = false;
-$foundVideos = array();
-if(!isset($_GET['channelId']) ){
-	die;
-}
-$channelId = strip_tags($_GET['channelId']);
-$pageToken = strip_tags($_GET['pageToken']);
-$json =json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/search?key='.$key.'&videoLicense=creativeCommon&type=video&part=snippet,id&order=date&maxResults=50&channelId='.$channelId.'&pageToken='.$pageToken), true);
-if (isset($json['nextPageToken'])){
-	$nextPageToken = $json['nextPageToken'];
+require_once __DIR__ . '/app/bootstrap.php';
+
+$config = app_config();
+$youtube = new YouTubeClient($config['youtube_api_key']);
+$channelId = isset($_GET['channelId']) ? clean_identifier($_GET['channelId']) : '';
+$pageToken = isset($_GET['pageToken']) ? clean_identifier($_GET['pageToken']) : '';
+
+if ($channelId === '') {
+	json_response(['error' => 'Missing channel id.'], 400);
 }
 
-//loop through found videos
-foreach ($json['items'] as $item) {
-	
-	$foundVideos[] = array_merge(array('id'=> $item['id']['videoId']), $item['snippet']);
+try {
+	json_response($youtube->creativeCommonsVideos($channelId, $pageToken));
+} catch (RuntimeException $e) {
+	$status = $e->getCode() >= 400 && $e->getCode() < 600 ? $e->getCode() : 502;
+	json_response(['error' => $e->getMessage()], $status);
 }
-
-echo json_encode(array("pageToken" => $nextPageToken, "foundVideos" => $foundVideos, 'totalResults' => $json['pageInfo']['totalResults']));
-?>

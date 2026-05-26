@@ -1,0 +1,140 @@
+<?php
+
+function app_language() {
+	$lang = strtolower($_GET['lang'] ?? '');
+
+	if ($lang === '') {
+		$lang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en', 0, 2));
+	}
+
+	return in_array($lang, ['en', 'nl', 'fr', 'de', 'es'], true) ? $lang : 'en';
+}
+
+function translations($lang) {
+	$strings = [
+		'en' => [
+			'app_name' => 'YouTube Creative Commons Finder',
+			'headline' => 'Find free-license videos in a channel',
+			'channel_url' => 'Channel URL',
+			'go' => 'Go',
+			'results' => 'Results',
+			'results_for' => 'Results for %s',
+			'loading_videos' => 'Loading videos...',
+			'rss_feed' => 'RSS feed',
+			'load_more' => 'Load more',
+			'upload' => 'upload',
+			'upload_title' => 'Upload this video to Wikimedia Commons',
+			'checking_commons' => 'Checking Commons...',
+			'possible_commons_match' => 'Possible Commons match (%s)',
+			'no_commons_match' => 'No Commons match',
+			'commons_check_failed' => 'Commons check failed',
+			'free_videos_found' => '%s free-license videos found',
+			'progress_more' => '%s of about %s matching videos of %s checked. Load more checks the next set from YouTube.',
+			'progress_stopped' => '%s of about %s matching videos of %s checked. Load more is hidden because YouTube stopped giving this tool more results, even though it still reports more matching videos.',
+			'progress_done' => '%s of about %s matching videos of %s checked. YouTube returned no more results to check.',
+			'invalid_url' => 'Enter a valid YouTube channel or user URL.',
+			'channel_not_recognized' => 'Channel URL not recognized.',
+		],
+		'nl' => [
+			'app_name' => 'YouTube Creative Commons Finder',
+			'headline' => 'Vind vrij gelicenseerde video\'s in een kanaal',
+			'channel_url' => 'Kanaal-URL',
+			'go' => 'Zoek',
+			'results' => 'Resultaten',
+			'results_for' => 'Resultaten voor %s',
+			'loading_videos' => 'Video\'s laden...',
+			'rss_feed' => 'RSS-feed',
+			'load_more' => 'Meer laden',
+			'upload' => 'upload',
+			'upload_title' => 'Upload deze video naar Wikimedia Commons',
+			'checking_commons' => 'Commons controleren...',
+			'possible_commons_match' => 'Mogelijke Commons-match (%s)',
+			'no_commons_match' => 'Geen Commons-match',
+			'commons_check_failed' => 'Commons-controle mislukt',
+			'free_videos_found' => '%s vrij gelicenseerde video\'s gevonden',
+			'progress_more' => '%s van ongeveer %s passende video\'s van %s gecontroleerd. Meer laden controleert de volgende set van YouTube.',
+			'progress_stopped' => '%s van ongeveer %s passende video\'s van %s gecontroleerd. Meer laden is verborgen omdat YouTube deze tool geen verdere resultaten meer geeft, hoewel YouTube nog wel meer passende video\'s meldt.',
+			'progress_done' => '%s van ongeveer %s passende video\'s van %s gecontroleerd. YouTube gaf geen verdere resultaten om te controleren.',
+			'invalid_url' => 'Voer een geldige YouTube-kanaal- of gebruikers-URL in.',
+			'channel_not_recognized' => 'Kanaal-URL niet herkend.',
+		],
+		'fr' => [
+			'app_name' => 'YouTube Creative Commons Finder',
+			'headline' => 'Trouver des vidéos sous licence libre dans une chaîne',
+			'channel_url' => 'URL de la chaîne',
+			'go' => 'Chercher',
+			'results' => 'Résultats',
+			'results_for' => 'Résultats pour %s',
+			'loading_videos' => 'Chargement des vidéos...',
+			'rss_feed' => 'Flux RSS',
+			'load_more' => 'Charger plus',
+			'upload' => 'upload',
+			'upload_title' => 'Téléverser cette vidéo vers Wikimedia Commons',
+			'checking_commons' => 'Vérification sur Commons...',
+			'possible_commons_match' => 'Correspondance Commons possible (%s)',
+			'no_commons_match' => 'Aucune correspondance Commons',
+			'commons_check_failed' => 'Échec de la vérification Commons',
+			'free_videos_found' => '%s vidéos sous licence libre trouvées',
+			'progress_more' => '%s sur environ %s vidéos correspondantes de %s vérifiées. Charger plus vérifie le lot suivant de YouTube.',
+			'progress_stopped' => '%s sur environ %s vidéos correspondantes de %s vérifiées. Charger plus est masqué car YouTube ne donne plus de résultats à cet outil, même s’il signale encore plus de vidéos correspondantes.',
+			'progress_done' => '%s sur environ %s vidéos correspondantes de %s vérifiées. YouTube n’a renvoyé aucun autre résultat à vérifier.',
+			'invalid_url' => 'Saisissez une URL de chaîne ou d’utilisateur YouTube valide.',
+			'channel_not_recognized' => 'URL de chaîne non reconnue.',
+		],
+		'de' => [
+			'app_name' => 'YouTube Creative Commons Finder',
+			'headline' => 'Frei lizenzierte Videos in einem Kanal finden',
+			'channel_url' => 'Kanal-URL',
+			'go' => 'Suchen',
+			'results' => 'Ergebnisse',
+			'results_for' => 'Ergebnisse für %s',
+			'loading_videos' => 'Videos werden geladen...',
+			'rss_feed' => 'RSS-Feed',
+			'load_more' => 'Mehr laden',
+			'upload' => 'upload',
+			'upload_title' => 'Dieses Video nach Wikimedia Commons hochladen',
+			'checking_commons' => 'Commons wird geprüft...',
+			'possible_commons_match' => 'Möglicher Commons-Treffer (%s)',
+			'no_commons_match' => 'Kein Commons-Treffer',
+			'commons_check_failed' => 'Commons-Prüfung fehlgeschlagen',
+			'free_videos_found' => '%s frei lizenzierte Videos gefunden',
+			'progress_more' => '%s von etwa %s passenden Videos von %s geprüft. Mehr laden prüft den nächsten Satz von YouTube.',
+			'progress_stopped' => '%s von etwa %s passenden Videos von %s geprüft. Mehr laden ist ausgeblendet, weil YouTube diesem Tool keine weiteren Ergebnisse gibt, obwohl YouTube weitere passende Videos meldet.',
+			'progress_done' => '%s von etwa %s passenden Videos von %s geprüft. YouTube hat keine weiteren Ergebnisse zum Prüfen geliefert.',
+			'invalid_url' => 'Gib eine gültige YouTube-Kanal- oder Nutzer-URL ein.',
+			'channel_not_recognized' => 'Kanal-URL nicht erkannt.',
+		],
+		'es' => [
+			'app_name' => 'YouTube Creative Commons Finder',
+			'headline' => 'Encontrar videos con licencia libre en un canal',
+			'channel_url' => 'URL del canal',
+			'go' => 'Buscar',
+			'results' => 'Resultados',
+			'results_for' => 'Resultados para %s',
+			'loading_videos' => 'Cargando videos...',
+			'rss_feed' => 'Feed RSS',
+			'load_more' => 'Cargar más',
+			'upload' => 'upload',
+			'upload_title' => 'Subir este video a Wikimedia Commons',
+			'checking_commons' => 'Comprobando Commons...',
+			'possible_commons_match' => 'Posible coincidencia en Commons (%s)',
+			'no_commons_match' => 'Sin coincidencia en Commons',
+			'commons_check_failed' => 'Falló la comprobación de Commons',
+			'free_videos_found' => '%s videos con licencia libre encontrados',
+			'progress_more' => '%s de unos %s videos coincidentes de %s comprobados. Cargar más comprueba el siguiente grupo de YouTube.',
+			'progress_stopped' => '%s de unos %s videos coincidentes de %s comprobados. Cargar más está oculto porque YouTube dejó de dar más resultados a esta herramienta, aunque todavía indica más videos coincidentes.',
+			'progress_done' => '%s de unos %s videos coincidentes de %s comprobados. YouTube no devolvió más resultados para comprobar.',
+			'invalid_url' => 'Introduce una URL válida de canal o usuario de YouTube.',
+			'channel_not_recognized' => 'URL del canal no reconocida.',
+		],
+	];
+
+	return $strings[$lang] ?? $strings['en'];
+}
+
+function tr($key, ...$args) {
+	global $i18n;
+	$text = $i18n[$key] ?? $key;
+
+	return $args ? vsprintf($text, $args) : $text;
+}

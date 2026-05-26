@@ -1,5 +1,13 @@
 {
+    "name": "local/youtube-channel",
+    "description": "Find Creative Commons licensed videos in a YouTube channel.",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
     "require": {
-        "addwiki/mediawiki-api-base": "~2.0"
+        "php": ">=8.1",
+        "addwiki/mediawiki-api-base": "^3.1"
+    },
+    "config": {
+        "sort-packages": true
     }
 }

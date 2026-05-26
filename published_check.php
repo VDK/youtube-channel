@@ -1,27 +1,16 @@
 <?php
+require_once __DIR__ . '/app/bootstrap.php';
 
-require_once( __DIR__ . '/vendor/autoload.php' );
-use Mediawiki\Api\SimpleRequest;
-$api = new \Mediawiki\Api\MediawikiApi( 'https://commons.wikimedia.org/w/api.php' );
-if(!isset($_GET['videoId'])){
-  die;
+$videoId = isset($_GET['videoId']) ? clean_identifier($_GET['videoId']) : '';
+
+if ($videoId === '') {
+	json_response(['matched' => false, 'confidence' => 'none', 'totalHits' => 0, 'results' => []], 400);
 }
-$publishedOnCommons = false;
-   try{
-         $response = $api->postRequest( new SimpleRequest( 'query',  
-                    array('list'    => 'search', 
-                          'srsearch' => 'intitle:webm insource:'.$_GET['videoId'],
-                          'srnamespace'=> '6' )
-                           ) 
-                    );
 
-        if($response['query']['searchinfo']['totalhits'] > 0){
-          $publishedOnCommons = true;
-        }
+$commons = new CommonsClient();
 
-    }
-    catch ( UsageException $e ) {
-        echo "The api returned an error!";
-    }
-echo json_encode( $publishedOnCommons  );
-?>
+try {
+	json_response($commons->findVideoMatches($videoId));
+} catch (RuntimeException $e) {
+	json_response(['matched' => false, 'confidence' => 'unknown', 'totalHits' => 0, 'results' => []], 502);
+}
