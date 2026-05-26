@@ -47,6 +47,26 @@ a {
 	line-height: 1.2;
 }
 
+.header-tools {
+	align-items: flex-start;
+	display: flex;
+	gap: 10px;
+}
+
+.source-link {
+	border: 1px solid transparent;
+	border-radius: 2px;
+	color: var(--accent);
+	font-size: 0.85rem;
+	padding: 4px 7px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.source-link:hover {
+	text-decoration: underline;
+}
+
 .language-switch {
 	position: relative;
 	white-space: nowrap;
@@ -395,6 +415,11 @@ a {
 @media (max-width: 640px) {
 	.app-header {
 		flex-direction: column;
+	}
+
+	.header-tools {
+		width: 100%;
+		justify-content: space-between;
 	}
 
 	.search-row,

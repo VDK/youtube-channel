@@ -39,6 +39,12 @@ composer install
 
 The project expects PHP 8.1 or newer.
 
+## License
+
+This project is licensed under the GNU General Public License, Version 3, 29 June 2007. See `LICENSE`.
+
+Repository: <https://github.com/VDK/youtube-channel/>
+
 ## Hosted Usage
 
 Most users should use the hosted Toolforge instance:

@@ -34,6 +34,7 @@ function translations($lang) {
 			'progress_done' => '%s of about %s matching videos of %s checked. YouTube returned no more results to check.',
 			'invalid_url' => 'Enter a valid YouTube channel or user URL.',
 			'channel_not_recognized' => 'Channel URL not recognized.',
+			'source_code' => 'Source code',
 		],
 		'nl' => [
 			'app_name' => 'YouTube Creative Commons Finder',
@@ -57,6 +58,7 @@ function translations($lang) {
 			'progress_done' => '%s van ongeveer %s passende video\'s van %s gecontroleerd. YouTube gaf geen verdere resultaten om te controleren.',
 			'invalid_url' => 'Voer een geldige YouTube-kanaal- of gebruikers-URL in.',
 			'channel_not_recognized' => 'Kanaal-URL niet herkend.',
+			'source_code' => 'Broncode',
 		],
 		'fr' => [
 			'app_name' => 'YouTube Creative Commons Finder',
@@ -80,6 +82,7 @@ function translations($lang) {
 			'progress_done' => '%s sur environ %s vidéos correspondantes de %s vérifiées. YouTube n’a renvoyé aucun autre résultat à vérifier.',
 			'invalid_url' => 'Saisissez une URL de chaîne ou d’utilisateur YouTube valide.',
 			'channel_not_recognized' => 'URL de chaîne non reconnue.',
+			'source_code' => 'Code source',
 		],
 		'de' => [
 			'app_name' => 'YouTube Creative Commons Finder',
@@ -103,6 +106,7 @@ function translations($lang) {
 			'progress_done' => '%s von etwa %s passenden Videos von %s geprüft. YouTube hat keine weiteren Ergebnisse zum Prüfen geliefert.',
 			'invalid_url' => 'Gib eine gültige YouTube-Kanal- oder Nutzer-URL ein.',
 			'channel_not_recognized' => 'Kanal-URL nicht erkannt.',
+			'source_code' => 'Quellcode',
 		],
 		'es' => [
 			'app_name' => 'YouTube Creative Commons Finder',
@@ -126,6 +130,7 @@ function translations($lang) {
 			'progress_done' => '%s de unos %s videos coincidentes de %s comprobados. YouTube no devolvió más resultados para comprobar.',
 			'invalid_url' => 'Introduce una URL válida de canal o usuario de YouTube.',
 			'channel_not_recognized' => 'URL del canal no reconocida.',
+			'source_code' => 'Código fuente',
 		],
 	];
 

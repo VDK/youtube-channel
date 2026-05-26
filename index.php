@@ -106,16 +106,19 @@ function language_label($lang) {
 			<p class="eyebrow"><?php echo e(tr('app_name')); ?></p>
 			<h1><?php echo e(tr('headline')); ?></h1>
 		</div>
-		<details class="language-switch">
-			<summary><?php echo e(language_label($lang)); ?></summary>
-			<nav aria-label="Language">
-				<?php foreach (['en', 'nl', 'fr', 'de', 'es'] as $languageCode): ?>
-					<a href="<?php echo e(language_url($languageCode)); ?>" class="<?php echo $lang === $languageCode ? 'active' : ''; ?>" lang="<?php echo e($languageCode); ?>">
-						<?php echo e(language_label($languageCode)); ?>
-					</a>
-				<?php endforeach; ?>
-			</nav>
-		</details>
+		<div class="header-tools">
+			<a class="source-link" href="https://github.com/VDK/youtube-channel/" rel="noopener noreferrer" target="_blank"><?php echo e(tr('source_code')); ?></a>
+			<details class="language-switch">
+				<summary><?php echo e(language_label($lang)); ?></summary>
+				<nav aria-label="Language">
+					<?php foreach (['en', 'nl', 'fr', 'de', 'es'] as $languageCode): ?>
+						<a href="<?php echo e(language_url($languageCode)); ?>" class="<?php echo $lang === $languageCode ? 'active' : ''; ?>" lang="<?php echo e($languageCode); ?>">
+							<?php echo e(language_label($languageCode)); ?>
+						</a>
+					<?php endforeach; ?>
+				</nav>
+			</details>
+		</div>
 	</header>
 
 	<main class="app-shell">
