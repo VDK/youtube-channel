@@ -107,7 +107,6 @@ function language_label($lang) {
 			<h1><?php echo e(tr('headline')); ?></h1>
 		</div>
 		<div class="header-tools">
-			<a class="source-link" href="https://github.com/VDK/youtube-channel/" rel="noopener noreferrer" target="_blank"><?php echo e(tr('source_code')); ?></a>
 			<details class="language-switch">
 				<summary><?php echo e(language_label($lang)); ?></summary>
 				<nav aria-label="Language">
@@ -164,5 +163,12 @@ function language_label($lang) {
 			<button id="loadMore" class="load-more" type="button" hidden><?php echo e(tr('load_more')); ?></button>
 		</div>
 	</main>
+	<footer class="app-footer">
+		<a href="https://github.com/VDK/youtube-channel/" rel="noopener noreferrer" target="_blank"><?php echo e(tr('source_code')); ?></a>
+		<span aria-hidden="true">|</span>
+		<span>GNU GPLv3</span>
+		<span aria-hidden="true">|</span>
+		<a href="https://veradekok.nl" rel="noopener noreferrer" target="_blank">Vera de Kok</a>
+	</footer>
 </body>
 </html>

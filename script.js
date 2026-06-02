@@ -229,17 +229,15 @@ async function checkWikimediaCommons(videoId, item, button, attempt = 1) {
 		}
 
 		if (commonsMatch.matched === true) {
-			const result = commonsMatch.results?.[0];
-			const commonsUrl = result?.pageid
-				? `https://commons.wikimedia.org/?curid=${encodeURIComponent(result.pageid)}`
-				: 'https://commons.wikimedia.org/';
+			const commonsUrl = commonsMatch.url || 'https://commons.wikimedia.org/';
+			const commonsLabel = commonsMatch.totalHits > 1 ? `${t('commons_video')}?` : t('commons_video');
 			const link = document.createElement('a');
 			link.className = 'commons-button commons-button-match';
 			link.href = commonsUrl;
 			link.target = '_blank';
 			link.rel = 'noopener noreferrer';
-			link.setAttribute('aria-label', `${t('commons_video')} (${t('external_link')})`);
-			link.innerHTML = `${commonsLogo()}<span>${t('commons_video')}</span>${externalIcon()}<span class="external-label">${t('external_link')}</span>`;
+			link.setAttribute('aria-label', `${commonsLabel} (${t('external_link')})`);
+			link.innerHTML = `${commonsLogo()}<span>${commonsLabel}</span>${externalIcon()}<span class="external-label">${t('external_link')}</span>`;
 			button.replaceWith(link);
 			item.classList.add('possible-commons-match');
 		} else {

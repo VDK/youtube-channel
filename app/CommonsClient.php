@@ -49,15 +49,31 @@ class CommonsClient {
 			throw new RuntimeException('Commons API request failed.', 0, $e);
 		}
 
+		$matched = $totalHits > 0;
+		$resultValues = array_values($results);
+
 		return [
-			'matched' => $totalHits > 0,
+			'matched' => $matched,
 			'confidence' => $totalHits > 0 ? 'possible' : 'none',
 			'totalHits' => $totalHits,
-			'results' => array_values($results),
+			'url' => $matched ? $this->matchUrl($videoId, $resultValues) : null,
+			'results' => $resultValues,
 		];
 	}
 
 	public function hasVideo($videoId) {
 		return $this->findVideoMatches($videoId)['matched'];
+	}
+
+	private function matchUrl($videoId, array $results) {
+		if (count($results) === 1 && !empty($results[0]['pageid'])) {
+			return 'https://commons.wikimedia.org/?curid=' . rawurlencode($results[0]['pageid']);
+		}
+
+		return 'https://commons.wikimedia.org/w/index.php?' . http_build_query([
+			'search' => 'insource:"' . $videoId . '"',
+			'title' => 'Special:MediaSearch',
+			'type' => 'video',
+		]);
 	}
 }
