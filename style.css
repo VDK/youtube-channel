@@ -470,7 +470,13 @@ a {
 
 	.header-tools {
 		width: 100%;
-		justify-content: space-between;
+		justify-content: flex-end;
+	}
+
+	.language-switch nav {
+		left: auto;
+		right: 0;
+		max-width: calc(100vw - 32px);
 	}
 
 	.search-row,
