@@ -98,7 +98,7 @@ function updateResultsNote(hasMoreUploads) {
 	}
 
 	if (footer) {
-		footer.hidden = loadedVideos === 0;
+		footer.hidden = loadedVideos === 0 && !hasMoreUploads;
 	}
 }
 
