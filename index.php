@@ -156,7 +156,6 @@ function language_label($lang) {
 			<div class="progress" aria-hidden="true">
 				<div id="progressbar"></div>
 			</div>
-			<p id="resultsNote" class="results-note"></p>
 		<?php endif; ?>
 
 		<ul id="videos" class="video-grid"></ul>

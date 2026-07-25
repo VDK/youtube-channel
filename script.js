@@ -23,7 +23,7 @@ async function loadPage(channelId, pageToken = '') {
 	}
 
 	loadingVideos = true;
-	toggleLoadMore(false);
+	setLoadingState(true);
 
 	try {
 		const params = new URLSearchParams({ channelId, pageToken });
@@ -49,6 +49,7 @@ async function loadPage(channelId, pageToken = '') {
 		}
 	} finally {
 		loadingVideos = false;
+		setLoadingState(false);
 	}
 }
 
@@ -73,13 +74,8 @@ function updateProgress() {
 }
 
 function updateResultsNote(hasMoreUploads) {
-	const note = document.getElementById('resultsNote');
 	const footer = document.getElementById('resultsFooter');
 	const footerNote = document.getElementById('footerResultsNote');
-
-	if (!note) {
-		return;
-	}
 
 	let message = '';
 
@@ -90,8 +86,6 @@ function updateResultsNote(hasMoreUploads) {
 	} else {
 		message = t('progress_done', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
 	}
-
-	note.textContent = message;
 
 	if (footerNote) {
 		footerNote.textContent = message;
@@ -125,6 +119,32 @@ function toggleLoadMore(show) {
 
 	if (loadMore) {
 		loadMore.hidden = !show;
+	}
+}
+
+function setLoadingState(loading) {
+	const footer = document.getElementById('resultsFooter');
+	const loadMore = document.getElementById('loadMore');
+	const footerProgress = document.querySelector('.footer-progress');
+
+	if (!footer) {
+		return;
+	}
+
+	footer.classList.toggle('loading', loading);
+
+	if (loadMore) {
+		if (loading) {
+			loadMore.disabled = true;
+			loadMore.innerHTML = `<span class="loading-spinner"></span>${t('load_more')}`;
+		} else {
+			loadMore.disabled = false;
+			loadMore.innerHTML = t('load_more');
+		}
+	}
+
+	if (footerProgress) {
+		footerProgress.classList.toggle('loading', loading);
 	}
 }
 
