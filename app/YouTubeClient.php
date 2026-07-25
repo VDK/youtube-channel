@@ -2,7 +2,7 @@
 
 class YouTubeClient {
 	private const REQUEST_DELAY_MICROSECONDS = 150000;
-	private const MAX_PLAYLIST_PAGES_PER_REQUEST = 2;
+	private const MAX_PLAYLIST_PAGES_PER_REQUEST = 10;
 
 	private $apiKey;
 

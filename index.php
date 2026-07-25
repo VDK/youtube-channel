@@ -98,7 +98,7 @@ function language_label($lang) {
 		window.channelTitle = <?php echo json_encode($channelTitle); ?>;
 		window.i18n = <?php echo json_encode($i18n); ?>;
 	</script>
-	<script defer src="script.js"></script>
+		<script defer src="script.js?v=<?php echo filemtime(__DIR__ . '/script.js'); ?>"></script>
 </head>
 <body>
 	<header class="app-header">
