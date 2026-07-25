@@ -125,6 +125,7 @@ function toggleLoadMore(show) {
 function setLoadingState(loading) {
 	const footer = document.getElementById('resultsFooter');
 	const loadMore = document.getElementById('loadMore');
+	const topProgress = document.querySelector('.progress');
 	const footerProgress = document.querySelector('.footer-progress');
 
 	if (!footer) {
@@ -134,13 +135,11 @@ function setLoadingState(loading) {
 	footer.classList.toggle('loading', loading);
 
 	if (loadMore) {
-		if (loading) {
-			loadMore.disabled = true;
-			loadMore.innerHTML = `<span class="loading-spinner"></span>${t('load_more')}`;
-		} else {
-			loadMore.disabled = false;
-			loadMore.innerHTML = t('load_more');
-		}
+		loadMore.disabled = loading;
+	}
+
+	if (topProgress) {
+		topProgress.classList.toggle('loading', loading);
 	}
 
 	if (footerProgress) {

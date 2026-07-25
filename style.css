@@ -256,6 +256,7 @@ a {
 	height: 7px;
 }
 
+.progress.loading,
 .footer-progress.loading {
 	background-image: repeating-linear-gradient(
 		-45deg,
@@ -298,23 +299,6 @@ a {
 .results-footer[hidden],
 .load-more[hidden] {
 	display: none !important;
-}
-
-.loading-spinner {
-	display: inline-block;
-	width: 1em;
-	height: 1em;
-	border: 2px solid currentColor;
-	border-right-color: transparent;
-	border-radius: 50%;
-	animation: spin 0.7s linear infinite;
-	vertical-align: middle;
-	margin-right: 6px;
-}
-
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
 }
 
 .footer-note {
