@@ -67,10 +67,40 @@ class YouTubeClient {
 		$pageToken = clean_identifier($pageToken);
 		$limit = $limit === null ? null : max(1, (int) $limit);
 
-		$channel = $this->channelById($channelId, 'id,contentDetails');
+		$channel = $this->channelById($channelId, 'id,contentDetails,statistics');
 
 		if (!$channel) {
 			throw new RuntimeException('Channel does not exist or the ID is wrong.', 404);
+		}
+
+		$totalVideos = (int) ($channel['statistics']['videoCount'] ?? 0);
+
+		// On the first call (no page token), do a quick Search API check
+		// to see if the channel has any CC-licensed videos at all.
+		// This avoids scanning 20k+ videos to find zero results.
+		if ($pageToken === '') {
+			$this->pauseBetweenRequests();
+			$searchResult = $this->getJson('https://www.googleapis.com/youtube/v3/search', [
+				'part' => 'snippet',
+				'channelId' => $channelId,
+				'videoLicense' => 'creativeCommon',
+				'type' => 'video',
+				'maxResults' => 1,
+			]);
+
+			if (empty($searchResult['items'])) {
+				return [
+					'pageToken' => false,
+					'foundVideos' => [],
+					'totalResults' => $totalVideos,
+					'totalUploads' => $totalVideos,
+					'scannedUploads' => $totalVideos,
+					'hasMoreUploads' => false,
+					'totalReportedVideos' => $totalVideos,
+					'scannedApiVideos' => $totalVideos,
+					'hasMoreApiPages' => false,
+				];
+			}
 		}
 
 		$videos = [];
