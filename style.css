@@ -245,6 +245,7 @@ a {
 	overflow: hidden;
 	border-radius: 2px;
 	background: var(--subtle);
+	position: relative;
 }
 
 .progress {
@@ -258,20 +259,27 @@ a {
 
 .progress.loading,
 .footer-progress.loading {
-	background-image: repeating-linear-gradient(
-		-45deg,
-		transparent,
-		transparent 4px,
-		rgba(255, 255, 255, 0.25) 4px,
-		rgba(255, 255, 255, 0.25) 8px
-	);
-	background-size: 200% 100%;
-	animation: bar-stripe 1s linear infinite;
+	background: var(--subtle);
 }
 
-@keyframes bar-stripe {
-	0%   { background-position: 0 0; }
-	100% { background-position: 100% 0; }
+.progress.loading::after,
+.footer-progress.loading::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 30%;
+	background: var(--accent);
+	opacity: 0.35;
+	border-radius: 2px;
+	animation: blue-bar-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes blue-bar-slide {
+	0%   { transform: translateX(-100%); }
+	50%  { transform: translateX(330%); }
+	100% { transform: translateX(760%); }
 }
 
 #progressbar,
@@ -280,6 +288,8 @@ a {
 	height: 100%;
 	background: var(--accent);
 	transition: width 300ms ease;
+	position: relative;
+	z-index: 1;
 }
 
 .results-footer {
