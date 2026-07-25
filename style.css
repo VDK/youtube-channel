@@ -256,16 +256,22 @@ a {
 	height: 7px;
 }
 
-.progress.loading #progressbar,
-.footer-progress.loading #footerProgressbar {
-	width: 30%;
-	animation: progress-indeterminate 1.2s ease-in-out infinite;
+.progress.loading,
+.footer-progress.loading {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		transparent,
+		transparent 4px,
+		rgba(255, 255, 255, 0.25) 4px,
+		rgba(255, 255, 255, 0.25) 8px
+	);
+	background-size: 200% 100%;
+	animation: bar-stripe 1s linear infinite;
 }
 
-@keyframes progress-indeterminate {
-	0%   { transform: translateX(-100%); }
-	50%  { transform: translateX(200%); }
-	100% { transform: translateX(400%); }
+@keyframes bar-stripe {
+	0%   { background-position: 0 0; }
+	100% { background-position: 100% 0; }
 }
 
 #progressbar,
