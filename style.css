@@ -59,15 +59,24 @@ a {
 }
 
 .language-switch summary {
+	align-items: center;
 	border: 1px solid var(--soft-line);
 	border-radius: 2px;
 	background: var(--subtle);
 	color: var(--text);
 	cursor: pointer;
+	display: inline-flex;
 	font-size: 0.85rem;
 	font-weight: 700;
+	gap: 4px;
 	list-style: none;
 	padding: 4px 7px;
+}
+
+.language-switch summary .language-icon {
+	fill: currentColor;
+	height: 1em;
+	width: 1em;
 }
 
 .language-switch summary::-webkit-details-marker {
