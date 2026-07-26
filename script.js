@@ -94,11 +94,15 @@ function updateResultsNote(hasMoreUploads) {
 	}
 
 	if (totalCcVideos > 0 && loadedVideos > 0) {
-		message = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos)) + '. ' + message;
+		message = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos)) + '.<br>' + message;
 	}
 
 	if (footerNote) {
-		footerNote.textContent = message;
+		if (totalCcVideos > 0 && loadedVideos > 0) {
+			footerNote.innerHTML = message;
+		} else {
+			footerNote.textContent = message;
+		}
 	}
 
 	if (footer) {
