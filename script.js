@@ -93,6 +93,10 @@ function updateResultsNote(hasMoreUploads) {
 		message = t('progress_done', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
 	}
 
+	if (totalCcVideos > 0 && loadedVideos > 0) {
+		message = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos)) + '. ' + message;
+	}
+
 	if (footerNote) {
 		footerNote.textContent = message;
 	}
