@@ -66,7 +66,7 @@ function updateProgress() {
 		if (totalCcVideos > 0 && loadedVideos < totalCcVideos) {
 			totalResultsNode.textContent = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos));
 		} else if (totalCcVideos > 0) {
-			totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
+			totalResultsNode.textContent = t('free_videos_found_min', formatCount(loadedVideos));
 		} else {
 			totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
 		}
@@ -98,7 +98,7 @@ function updateResultsNote(hasMoreUploads) {
 	if (totalCcVideos > 0 && loadedVideos > 0 && loadedVideos < totalCcVideos) {
 		message = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos)) + '.<br>' + message;
 	} else if (totalCcVideos > 0 && loadedVideos > 0) {
-		message = t('free_videos_found', formatCount(loadedVideos)) + '.<br>' + message;
+		message = t('free_videos_found_min', formatCount(loadedVideos)) + '.<br>' + message;
 	}
 
 	if (footerNote) {
