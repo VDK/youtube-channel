@@ -74,10 +74,12 @@ class YouTubeClient {
 		}
 
 		$totalVideos = (int) ($channel['statistics']['videoCount'] ?? 0);
+		$knownById = [];
 
-		// On the first call (no page token), do a quick Search API check
-		// to see if the channel has any CC-licensed videos at all.
-		// This avoids scanning 20k+ videos to find zero results.
+		// On the first call (no page token), use Search API to quickly find CC videos.
+		// This gives us up to 50 CC results + the total CC count in one call.
+		// If total CC <= 50 we're done immediately; otherwise we seed the result list
+		// and skip license checks for known CC videos during the playlist scan.
 		if ($pageToken === '') {
 			$this->pauseBetweenRequests();
 			$searchResult = $this->getJson('https://www.googleapis.com/youtube/v3/search', [
@@ -85,10 +87,12 @@ class YouTubeClient {
 				'channelId' => $channelId,
 				'videoLicense' => 'creativeCommon',
 				'type' => 'video',
-				'maxResults' => 1,
+				'maxResults' => 50,
 			]);
 
-			if (empty($searchResult['items'])) {
+			$totalCc = (int) ($searchResult['pageInfo']['totalResults'] ?? 0);
+
+			if ($totalCc === 0) {
 				return [
 					'pageToken' => false,
 					'foundVideos' => [],
@@ -101,9 +105,39 @@ class YouTubeClient {
 					'hasMoreApiPages' => false,
 				];
 			}
+
+			foreach ($searchResult['items'] as $item) {
+				$id = $item['id']['videoId'] ?? '';
+				if ($id === '') {
+					continue;
+				}
+				$knownById[$id] = array_merge(
+					['id' => $id],
+					$this->decodeSnippet($item['snippet'] ?? [])
+				);
+			}
+
+			if ($totalCc <= count($knownById)) {
+				// Search API found all CC videos — no playlist scan needed.
+				return [
+					'pageToken' => false,
+					'foundVideos' => array_values($knownById),
+					'totalResults' => $totalVideos,
+					'totalUploads' => $totalVideos,
+					'scannedUploads' => $totalVideos,
+					'hasMoreUploads' => false,
+					'totalReportedVideos' => $totalVideos,
+					'scannedApiVideos' => $totalVideos,
+					'hasMoreApiPages' => false,
+				];
+			}
+
+			// More CC videos exist beyond this batch — seed the result list and
+			// bump the limit so Search API results don't cap playlist scanning.
+			$limit = $limit === null ? null : $limit + count($knownById);
 		}
 
-		$videos = [];
+		$videos = array_values($knownById);
 		$uploadsPlaylistId = $channel['contentDetails']['relatedPlaylists']['uploads'] ?? '';
 		$nextPageToken = $pageToken;
 		$scannedUploads = 0;
@@ -113,13 +147,13 @@ class YouTubeClient {
 		if ($uploadsPlaylistId === '') {
 			return [
 				'pageToken' => false,
-				'foundVideos' => [],
-				'totalResults' => 0,
-				'totalUploads' => 0,
-				'scannedUploads' => 0,
+				'foundVideos' => $videos,
+				'totalResults' => count($videos),
+				'totalUploads' => count($videos),
+				'scannedUploads' => count($videos),
 				'hasMoreUploads' => false,
-				'totalReportedVideos' => 0,
-				'scannedApiVideos' => 0,
+				'totalReportedVideos' => count($videos),
+				'scannedApiVideos' => count($videos),
 				'hasMoreApiPages' => false,
 			];
 		}
@@ -135,20 +169,28 @@ class YouTubeClient {
 
 			$scannedUploads += count($playlistPage['items'] ?? []);
 			$totalUploads = $playlistPage['pageInfo']['totalResults'] ?? $totalUploads;
-			$videoIds = [];
+			$unknownIds = [];
 
 			foreach ($playlistPage['items'] ?? [] as $item) {
 				$videoId = $item['contentDetails']['videoId'] ?? '';
 
-				if ($videoId !== '') {
-					$videoIds[] = $videoId;
+				if ($videoId === '') {
+					continue;
+				}
+
+				if (isset($knownById[$videoId])) {
+					// Already known as CC from the Search API — add directly.
+					$videos[] = $knownById[$videoId];
+					unset($knownById[$videoId]);
+				} else {
+					$unknownIds[] = $videoId;
 				}
 			}
 
-			if ($videoIds) {
+			if ($unknownIds) {
 				$this->pauseBetweenRequests();
 				$remaining = $limit === null ? null : $limit - count($videos);
-				$videos = array_merge($videos, $this->creativeCommonsVideosByIds($videoIds, $remaining));
+				$videos = array_merge($videos, $this->creativeCommonsVideosByIds($unknownIds, $remaining));
 			}
 
 			$nextPageToken = $playlistPage['nextPageToken'] ?? false;
