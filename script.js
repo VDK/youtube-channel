@@ -63,8 +63,10 @@ function updateProgress() {
 	const percentage = Math.min(Math.round((scannedApiVideos / boundedTotal) * 100), 100);
 
 	if (totalResultsNode) {
-		if (totalCcVideos > 0) {
+		if (totalCcVideos > 0 && loadedVideos < totalCcVideos) {
 			totalResultsNode.textContent = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos));
+		} else if (totalCcVideos > 0) {
+			totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
 		} else {
 			totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
 		}
@@ -93,12 +95,14 @@ function updateResultsNote(hasMoreUploads) {
 		message = t('progress_done', formatCount(scannedApiVideos), formatCount(totalReportedVideos), window.channelTitle || '');
 	}
 
-	if (totalCcVideos > 0 && loadedVideos > 0) {
+	if (totalCcVideos > 0 && loadedVideos > 0 && loadedVideos < totalCcVideos) {
 		message = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos)) + '.<br>' + message;
+	} else if (totalCcVideos > 0 && loadedVideos > 0) {
+		message = t('free_videos_found', formatCount(loadedVideos)) + '.<br>' + message;
 	}
 
 	if (footerNote) {
-		if (totalCcVideos > 0 && loadedVideos > 0) {
+		if (loadedVideos > 0 && totalCcVideos > 0) {
 			footerNote.innerHTML = message;
 		} else {
 			footerNote.textContent = message;
