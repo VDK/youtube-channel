@@ -1,6 +1,7 @@
 let loadedVideos = 0;
 let scannedApiVideos = 0;
 let totalReportedVideos = 0;
+let totalCcVideos = 0;
 let nextPageToken = '';
 let loadingVideos = false;
 const i18n = window.i18n || {};
@@ -37,6 +38,7 @@ async function loadPage(channelId, pageToken = '') {
 		nextPageToken = result.pageToken || '';
 		scannedApiVideos += result.scannedApiVideos || result.scannedUploads || 0;
 		totalReportedVideos = result.totalReportedVideos || result.totalResults || totalReportedVideos;
+		totalCcVideos = result.totalCc === 0 || result.totalCc > 0 ? result.totalCc : totalCcVideos;
 		renderVideos(result.foundVideos);
 		updateProgress();
 		updateResultsNote(result.hasMoreApiPages === true || result.hasMoreUploads === true);
@@ -61,7 +63,11 @@ function updateProgress() {
 	const percentage = Math.min(Math.round((scannedApiVideos / boundedTotal) * 100), 100);
 
 	if (totalResultsNode) {
-		totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
+		if (totalCcVideos > 0) {
+			totalResultsNode.textContent = t('free_videos_found_of', formatCount(loadedVideos), formatCount(totalCcVideos));
+		} else {
+			totalResultsNode.textContent = t('free_videos_found', formatCount(loadedVideos));
+		}
 	}
 
 	if (progressbar) {

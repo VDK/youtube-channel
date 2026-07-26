@@ -104,6 +104,7 @@ class YouTubeClient {
 					'totalReportedVideos' => $totalVideos,
 					'scannedApiVideos' => $totalVideos,
 					'hasMoreApiPages' => false,
+					'totalCc' => 0,
 				];
 			}
 
@@ -130,6 +131,7 @@ class YouTubeClient {
 					'totalReportedVideos' => $totalVideos,
 					'scannedApiVideos' => $totalVideos,
 					'hasMoreApiPages' => false,
+					'totalCc' => $totalCc,
 				];
 			}
 
@@ -216,6 +218,7 @@ class YouTubeClient {
 			'totalReportedVideos' => $totalUploads ?: $scannedUploads,
 			'scannedApiVideos' => $scannedUploads,
 			'hasMoreApiPages' => !$allFound && $nextPageToken !== false,
+			'totalCc' => $totalCc,
 		];
 	}
 
