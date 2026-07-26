@@ -75,6 +75,7 @@ class YouTubeClient {
 
 		$totalVideos = (int) ($channel['statistics']['videoCount'] ?? 0);
 		$knownById = [];
+		$totalCc = null;
 
 		// On the first call (no page token), use Search API to quickly find CC videos.
 		// This gives us up to 50 CC results + the total CC count in one call.
@@ -140,7 +141,7 @@ class YouTubeClient {
 		$videos = array_values($knownById);
 		$uploadsPlaylistId = $channel['contentDetails']['relatedPlaylists']['uploads'] ?? '';
 		$nextPageToken = $pageToken;
-		$scannedUploads = 0;
+		$scannedUploads = count($knownById);
 		$totalUploads = 0;
 		$scannedPages = 0;
 
@@ -201,16 +202,20 @@ class YouTubeClient {
 			&& ($maxPlaylistPages === null || $scannedPages < $maxPlaylistPages)
 		);
 
+		// If we know the total CC count and have found everything, signal done
+		// even if there are still playlist pages left to scan.
+		$allFound = $totalCc !== null && count($videos) >= $totalCc;
+
 		return [
-			'pageToken' => $nextPageToken,
+			'pageToken' => $allFound ? false : $nextPageToken,
 			'foundVideos' => $videos,
 			'totalResults' => $totalUploads ?: $scannedUploads,
 			'totalUploads' => $totalUploads ?: $scannedUploads,
 			'scannedUploads' => $scannedUploads,
-			'hasMoreUploads' => $nextPageToken !== false,
+			'hasMoreUploads' => !$allFound && $nextPageToken !== false,
 			'totalReportedVideos' => $totalUploads ?: $scannedUploads,
 			'scannedApiVideos' => $scannedUploads,
-			'hasMoreApiPages' => $nextPageToken !== false,
+			'hasMoreApiPages' => !$allFound && $nextPageToken !== false,
 		];
 	}
 
