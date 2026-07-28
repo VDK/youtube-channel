@@ -240,12 +240,22 @@ a {
 	min-width: 0;
 }
 
-.results-toolbar h2 {
+.results-headline-row {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+}
+
+.results-headline-row h2 {
+	flex: 1;
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 600;
-	overflow-wrap: break-word;
-	word-break: break-word;
+	min-width: 0;
+}
+
+.results-headline-row .rss-link {
+	flex: 0 0 auto;
 }
 
 .progress,

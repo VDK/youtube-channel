@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/app/bootstrap.php';
 
 $config = app_config();
@@ -141,9 +141,9 @@ function language_label($lang) {
 			<section class="results-toolbar" aria-live="polite">
 				<div>
 					<p class="eyebrow"><?php echo $escapedChannelTitle !== '' ? e(tr('results_for', $channelTitle)) : e(tr('results')); ?></p>
-					<h2 id="totalResults"><?php echo e(tr('loading_videos')); ?></h2>
-				</div>
-				<a class="rss-link" href="rss.php?channel_id=<?php echo urlencode($channelId); ?>&amp;limit=50">
+					<div class="results-headline-row">
+						<h2 id="totalResults"><?php echo e(tr('loading_videos')); ?></h2>
+						<a class="rss-link" href="rss.php?channel_id=<?php echo urlencode($channelId); ?>&amp;limit=50">
 					<svg class="rss-icon" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M5 5.5v3a10.5 10.5 0 0 1 10.5 10.5h3A13.5 13.5 0 0 0 5 5.5Z"></path>
 						<path d="M5 11v3a5 5 0 0 1 5 5h3a8 8 0 0 0-8-8Z"></path>
@@ -151,7 +151,9 @@ function language_label($lang) {
 					</svg>
 					<span class="rss-label-full"><?php echo e(tr('rss_feed')); ?></span>
 					<span class="rss-label-short">RSS</span>
-				</a>
+					</a>
+				</div>
+			</div>
 			</section>
 			<div class="progress" aria-hidden="true">
 				<div id="progressbar"></div>
