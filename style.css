@@ -1,4 +1,4 @@
-:root {
+﻿:root {
 	--bg: #f8f9fa;
 	--panel: #fff;
 	--text: #202122;
@@ -228,6 +228,7 @@ a {
 .results-toolbar {
 	align-items: flex-start;
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 12px;
 	margin-top: 14px;
@@ -235,6 +236,7 @@ a {
 }
 
 .results-toolbar > div {
+	flex: 1;
 	min-width: 0;
 }
 
@@ -528,8 +530,6 @@ a {
 	}
 
 	.results-toolbar {
-		align-items: center;
-		flex-direction: row;
 		padding: 12px;
 	}
 
