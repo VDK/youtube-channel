@@ -207,22 +207,18 @@ class YouTubeClient {
 			&& ($maxPlaylistPages === null || $scannedPages < $maxPlaylistPages)
 		);
 
-		// If we know the total CC count and have found everything, signal done
-		// even if there are still playlist pages left to scan.
-		$allFound = $totalCc !== null && count($videos) >= $totalCc;
-
 		$this->sortByPublishedAtDesc($videos);
 
 		return [
-			'pageToken' => $allFound ? false : $nextPageToken,
+			'pageToken' => $nextPageToken,
 			'foundVideos' => $videos,
 			'totalResults' => $totalUploads ?: $scannedUploads,
 			'totalUploads' => $totalUploads ?: $scannedUploads,
 			'scannedUploads' => $scannedUploads,
-			'hasMoreUploads' => !$allFound && $nextPageToken !== false,
+			'hasMoreUploads' => $nextPageToken !== false,
 			'totalReportedVideos' => $totalUploads ?: $scannedUploads,
 			'scannedApiVideos' => $scannedUploads,
-			'hasMoreApiPages' => !$allFound && $nextPageToken !== false,
+			'hasMoreApiPages' => $nextPageToken !== false,
 			'totalCc' => $totalCc,
 		];
 	}
