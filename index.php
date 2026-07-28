@@ -172,7 +172,7 @@ function language_label($lang) {
 	<footer class="app-footer">
 		<a href="https://github.com/VDK/youtube-channel/" rel="noopener noreferrer" target="_blank"><?php echo e(tr('source_code')); ?></a>
 		<span aria-hidden="true">|</span>
-		<span>GNU GPLv3</span>
+		<a href="https://github.com/VDK/youtube-channel/blob/main/LICENSE" rel="noopener noreferrer" target="_blank">GNU GPLv3</a>
 		<span aria-hidden="true">|</span>
 		<a href="https://veradekok.nl" rel="noopener noreferrer" target="_blank">Vera de Kok</a>
 	</footer>
