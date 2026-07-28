@@ -226,7 +226,7 @@ a {
 }
 
 .results-toolbar {
-	align-items: center;
+	align-items: flex-start;
 	display: flex;
 	justify-content: space-between;
 	gap: 12px;
