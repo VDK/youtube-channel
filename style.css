@@ -234,10 +234,16 @@ a {
 	padding: 14px 16px;
 }
 
+.results-toolbar > div {
+	min-width: 0;
+}
+
 .results-toolbar h2 {
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 600;
+	overflow-wrap: break-word;
+	word-break: break-word;
 }
 
 .progress,
