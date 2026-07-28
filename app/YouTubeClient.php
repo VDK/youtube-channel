@@ -121,9 +121,11 @@ class YouTubeClient {
 
 			if ($totalCc <= count($knownById)) {
 				// Search API found all CC videos — no playlist scan needed.
+				$videos = array_values($knownById);
+				$this->sortByPublishedAtDesc($videos);
 				return [
 					'pageToken' => false,
-					'foundVideos' => array_values($knownById),
+					'foundVideos' => $videos,
 					'totalResults' => $totalVideos,
 					'totalUploads' => $totalVideos,
 					'scannedUploads' => $totalVideos,
@@ -148,6 +150,7 @@ class YouTubeClient {
 		$scannedPages = 0;
 
 		if ($uploadsPlaylistId === '') {
+			$this->sortByPublishedAtDesc($videos);
 			return [
 				'pageToken' => false,
 				'foundVideos' => $videos,
@@ -207,6 +210,8 @@ class YouTubeClient {
 		// If we know the total CC count and have found everything, signal done
 		// even if there are still playlist pages left to scan.
 		$allFound = $totalCc !== null && count($videos) >= $totalCc;
+
+		$this->sortByPublishedAtDesc($videos);
 
 		return [
 			'pageToken' => $allFound ? false : $nextPageToken,
@@ -319,6 +324,12 @@ class YouTubeClient {
 
 	private function pauseBetweenRequests($microseconds = self::REQUEST_DELAY_MICROSECONDS) {
 		usleep($microseconds);
+	}
+
+	private function sortByPublishedAtDesc(array &$videos): void {
+		usort($videos, function (array $a, array $b): int {
+			return strcmp($b['publishedAt'] ?? '', $a['publishedAt'] ?? '');
+		});
 	}
 
 	private function decodeSnippet(array $snippet) {
